@@ -1,0 +1,91 @@
+#include "Arena.h"
+
+// Constructor: Khởi tạo board với tường bao quanh
+Arena::Arena() {
+    for (int i = 0; i < A_HEIGHT; i++) {
+        for (int j = 0; j < A_WIDTH; j++) {
+            // [LỖI 1]: Logic tạo tường bị sai lệch chỉ số
+            // Đúng ra phải là j == 0 để tạo tường bên trái
+            if (i == A_HEIGHT - 1 || j == 1 || j == A_WIDTH - 1) {
+                board[i][j] = 1;
+            } else {
+                board[i][j] = 0;
+            }
+        }
+    }
+}
+
+// Kiểm tra va chạm
+bool Arena::isValidPosition(const int tetromino[4][4], int x, int y) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (tetromino[i][j] != 0) {
+                int px = x + j;
+                int py = y + i;
+
+                // [LỖI 2]: Điều kiện biên sai
+                // px >= A_WIDTH mới đúng. Dùng > sẽ cho phép khối đi lấn vào tường phải 1 ô
+                if (px < 0 || px > A_WIDTH || py >= A_HEIGHT) {
+                    return false;
+                }
+
+                if (py >= 0 && board[py][px] != 0) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void Arena::lockPiece(const int tetromino[4][4], int x, int y) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (tetromino[i][j] != 0) {
+                if (y + i >= 0 && y + i < A_HEIGHT - 1 && x + j > 0 && x + j < A_WIDTH - 1) {
+                    board[y + i][x + j] = tetromino[i][j];
+                }
+            }
+        }
+    }
+}
+
+int Arena::clearLines() {
+    int linesCleared = 0;
+
+    for (int i = A_HEIGHT - 2; i > 0; i--) {
+        bool isFull = true;
+
+        for (int j = 1; j < A_WIDTH - 1; j++) {
+            if (board[i][j] == 0) {
+                isFull = false;
+                break;
+            }
+        }
+
+        if (isFull) {
+            linesCleared++;
+
+            for (int k = i; k > 0; k--) {
+                for (int col = 1; col < A_WIDTH - 1; col++) {
+                    board[k][col] = board[k - 1][col];
+                }
+            }
+
+            for (int col = 1; col < A_WIDTH - 1; col++) {
+                board[0][col] = 0;
+            }
+
+            // [LỖI 3]: Thiếu logic kiểm tra lại dòng hiện tại
+            // Khi dòng trên tụt xuống, nó có thể cũng đầy.
+            // Nếu thiếu i++, vòng lặp sẽ i-- và bỏ qua dòng vừa tụt xuống đó.
+            // (Đã xóa dòng i++; ở đây)
+        }
+    }
+    return linesCleared;
+}
+
+int Arena::getCell(int y, int x) const {
+    if (x < 0 || x >= A_WIDTH || y < 0 || y >= A_HEIGHT) return 1;
+    return board[y][x];
+}
