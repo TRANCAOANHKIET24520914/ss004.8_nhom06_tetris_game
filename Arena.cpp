@@ -4,9 +4,7 @@
 Arena::Arena() {
     for (int i = 0; i < A_HEIGHT; i++) {
         for (int j = 0; j < A_WIDTH; j++) {
-            // [LỖI 1]: Logic tạo tường bị sai lệch chỉ số
-            // Đúng ra phải là j == 0 để tạo tường bên trái
-            if (i == A_HEIGHT - 1 || j == 1 || j == A_WIDTH - 1) {
+            if (i == A_HEIGHT - 1 || j == 0 || j == A_WIDTH - 1) {
                 board[i][j] = 1;
             } else {
                 board[i][j] = 0;
@@ -23,9 +21,7 @@ bool Arena::isValidPosition(const int tetromino[4][4], int x, int y) {
                 int px = x + j;
                 int py = y + i;
 
-                // [LỖI 2]: Điều kiện biên sai
-                // px >= A_WIDTH mới đúng. Dùng > sẽ cho phép khối đi lấn vào tường phải 1 ô
-                if (px < 0 || px > A_WIDTH || py >= A_HEIGHT) {
+                if (px < 0 || px >= A_WIDTH || py >= A_HEIGHT) {
                     return false;
                 }
 
@@ -76,10 +72,7 @@ int Arena::clearLines() {
                 board[0][col] = 0;
             }
 
-            // [LỖI 3]: Thiếu logic kiểm tra lại dòng hiện tại
-            // Khi dòng trên tụt xuống, nó có thể cũng đầy.
-            // Nếu thiếu i++, vòng lặp sẽ i-- và bỏ qua dòng vừa tụt xuống đó.
-            // (Đã xóa dòng i++; ở đây)
+            i++;
         }
     }
     return linesCleared;
