@@ -71,6 +71,23 @@ void removeLine()
     arena.clearLines();
 }
 
+void rotateBlock()
+{
+    char rotated[4][4];
+
+    // Xoay khối:
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            rotated[i][j] = blocks[b][3 - j][i];
+
+    
+    // 3. Ghi đè lại khối hiện tại
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+                blocks[b][i][j] = rotated[i][j];
+}
+
+
 int main()
 {
     srand(time(0));
@@ -97,6 +114,8 @@ int main()
                 x++;
             if (c == 'x' && canMove(0, 1))
                 y++;
+            if (c == 'w')
+                rotateBlock();
             if (c == 'q')
                 break;
         }
