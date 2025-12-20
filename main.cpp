@@ -81,10 +81,14 @@ void rotateBlock()
             rotated[i][j] = blocks[b][3 - j][i];
 
     
-    // 3. Ghi đè lại khối hiện tại
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
+ // Kiểm tra có xoay được không
+    if (arena.isValidPosition(rotated, x, y))
+    {
+        // Ghi đè lại khối hiện tại
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 4; j++)
                 blocks[b][i][j] = rotated[i][j];
+    }
 }
 
 
