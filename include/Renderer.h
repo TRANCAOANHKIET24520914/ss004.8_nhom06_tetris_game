@@ -18,7 +18,7 @@ private:
 public:
     Renderer();
     
-    // Thiết lập ban đầu (ẩn con trỏ chuột)
+    // Thiết lập ban đầu (ẩn con trỏ chuột).
     void init();
 
     // Hàm vẽ chính: Kết hợp Arena và Khối đang rơi
@@ -27,5 +27,6 @@ public:
     // Màn hình Game Over
     void renderGameOver(int finalScore);
 };
+
 
 #endif
