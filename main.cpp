@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <ctime>
 #include "../include/Arena.h"
-#include "../include/Renderer.h" // Thêm thư viện c
+#include "../include/Renderer.h" // Thêm thư viện 
 
 using namespace std;
 #define H 20
