@@ -4,38 +4,38 @@
 
 Game::Game()
 {
-    srand(time(NULL));
-    arena.reset();
-    spawnNew();
-    score = 0;
-    gameOver = false;
+    srand(time(NULL));      // Khoi tao khoi ngau nhien de random khoi
+    arena.reset();          // Reset board
+    spawnNew();             // Sinh khoi moi
+    score = 0;              // Diem
+    gameOver = false;       // Cho phep game chay
 }
 
 void Game::spawnNew()
 {
-    current = Tetromino();
-    posX = A_WIDTH / 2 - 2;
-    posY = 0;
+    current = Tetromino();          // Tao khoi teromino
+    posX = A_WIDTH / 2 - 2;         // Dat khoi o giua
+    posY = 0;                       // Dat khoi tren cung
 
-    if (arena.checkCollision(current, posX, posY))
+    if (arena.checkCollision(current, posX, posY))      
     {
-        gameOver = true;
+        gameOver = true;            // Ket thuc tro choi neu khoi da day
     }
 }
 
-void Game::handleInput(int key)
+void Game::handleInput(int key)     // Khong va cham thi moi cho di chuyen
 {
     switch (key)
     {
-    case 75: // trai
+    case 75: // Trai
         if (!arena.checkCollision(current, posX - 1, posY))
             posX--;
         break;
-    case 77: // phai
+    case 77: // Phai
         if (!arena.checkCollision(current, posX + 1, posY))
             posX++;
         break;
-    case 80: // xuong
+    case 80: // Xuong
         if (!arena.checkCollision(current, posX, posY + 1))
             posY++;
         break;
@@ -44,6 +44,28 @@ void Game::handleInput(int key)
             current.rotateRight();
         break;
     }
+}
+
+void Game::update()
+{
+    static DWORD lastTick = GetTickCount();     // Thoi diem truoc
+    DWORD now = GetTickCount();                 // Thoi diem hien tai
+
+    if (now - lastTick >= 500)                  // Cu 500ms thi roi xuonh 1 o
+    {
+        if (arena.checkCollision(current, posX, posY + 1))      // Neu ko xuong dc nx
+        {
+            arena.merge(current, posX, posY);                   // Gan khoi vao board
+            score += arena.clearLines() * 100;                  // Dong day thi xoa va tang diem
+            spawnNew();                                         // Sinh khoi moi
+        }
+        else
+            posY++;                                             // tiep tuc roi xuong
+
+        lastTick = now;                                         // Cap nhat lastTick
+    }
+
+    renderer.draw(arena, current, posX, posY, score);           // Ve lai board
 }
 
 void Game::start()

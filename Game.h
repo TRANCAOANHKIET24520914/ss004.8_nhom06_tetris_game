@@ -21,6 +21,7 @@ public:
     void start();
     void handleInput(int key);
     void spawnNew();
+    void update();
 };
 
 #endif
