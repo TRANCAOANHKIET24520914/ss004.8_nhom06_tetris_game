@@ -4,6 +4,7 @@
 #include <ctime>
 #include "../include/Arena.h"
 #include "../include/Renderer.h" // Thêm thư viện 
+#include "../include/Game.h"
 
 using namespace std;
 #define H 20
