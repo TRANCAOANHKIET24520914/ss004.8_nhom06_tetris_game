@@ -85,6 +85,12 @@ void Game::handleInput(int key)     // Khong va cham thi moi cho di chuyen
             spawnNew();
             break;
         }
+        break;
+    case 32: // space -> xoay        
+        current.rotateRight();
+        if (arena.checkCollision(current, posX, posY))
+            current.rotateRight(), current.rotateRight(), current.rotateRight();
+        break;
     }
 }
 
