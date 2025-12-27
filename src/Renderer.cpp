@@ -1,68 +1,63 @@
 #include "Renderer.h"
-#include <cstdio> // Dùng cho printf nếu cần format số đẹp
+#include <iostream>
 
 using namespace std;
 
-Renderer::Renderer() {
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-}
+// Ve toan bo man hình game Tetris ra console
 
-void Renderer::gotoxy(int x, int y) {
-    COORD c = { (SHORT)x, (SHORT)y };
-    SetConsoleCursorPosition(hConsole, c);
-}
+void Renderer::draw(const Arena &arena,
+                    const Tetromino &t,
+                    int posX,
+                    int posY,
+                    int score)
+{
+    // an con tro chuot trong console
+    cout << "\e[?25l";
 
-void Renderer::init() {
-    // Ẩn con trỏ chuột nhấp nháy để game nhìn mượt hơn
-    CONSOLE_CURSOR_INFO Info;
-    Info.bVisible = FALSE;
-    Info.dwSize = 20;
-    SetConsoleCursorInfo(hConsole, &Info);
-}
+    // Đua con tro ve goc tren ben trai man hinh
+    cout << "\e[H";
 
-void Renderer::render(const Arena& arena, const char currentBlock[4][4], int x, int y, int score) {
-    // 1. Di chuyển về góc trái trên cùng thay vì xóa màn hình (chống giật)
-    gotoxy(0, 0);
+    // ====== Ve vien tren ======
+    cout << "\xDA"; // Goc tren trai
+    for (int i = 0; i < A_WIDTH * 2; i++)
+        cout << "\xC4"; // Đưong ngang
+    cout << "\xBF\n"; // Goc tren phai
 
-    // 2. Vẽ Board và Khối đang rơi
-    for (int i = 0; i < A_HEIGHT; i++) {
-        for (int j = 0; j < A_WIDTH; j++) {
-            // Mặc định lấy pixel từ Arena (tường hoặc các khối đã khóa)
-            char pixel = arena.getCell(i, j);
+    // ====== Ve tung dong trong Arena ======
+    for (int y = 0; y < A_HEIGHT; y++)
+    {
+        cout << "\xB3"; // Vien trai
 
-            // Kiểm tra xem vị trí (j, i) có thuộc về khối đang rơi (currentBlock) không
-            // Tọa độ khối đang rơi là từ [y, y+3] và [x, x+3]
-            if (i >= y && i < y + 4 && j >= x && j < x + 4) {
-                // Tính tọa độ cục bộ trong ma trận 4x4 của khối
-                int localRow = i - y;
-                int localCol = j - x;
-                
-                // Nếu tại vị trí đó của khối có ký tự (không phải khoảng trắng), vẽ đè lên
-                if (currentBlock[localRow][localCol] != ' ') {
-                    pixel = currentBlock[localRow][localCol];
-                }
+        for (int x = 0; x < A_WIDTH; x++)
+        {
+            bool falling = false;
+
+
+            int lx = x - posX;
+            int ly = y - posY;
+
+            if (lx >= 0 && lx < 4 && ly >= 0 && ly < 4)
+            {
+                if (t.getCell(lx, ly) == 1)
+                    falling = true;
             }
-            cout << pixel;
+
+
+            if (arena.getCell(x, y) == 1 || falling)
+                cout << "\xDB\xDB"; // Ve khoi đac
+            else
+                cout << ". ";       // O trong
         }
-        
-        // 3. Vẽ UI (Điểm số) bên cạnh bảng chơi.
-        if (i == 2) cout << "  SCORE: " << score;
-        else if (i == 4) cout << "  CONTROLS:";
-        else if (i == 5) cout << "  A/D: Move";
-        else if (i == 6) cout << "  X: Down";
-        else if (i == 7) cout << "  Space: Rotate"; // Dự trù cho module Input
-        
-        cout << endl; // Xuống dòng sau khi vẽ xong 1 hàng
+
+        cout << "\xB3\n"; // Vien phai
     }
-}
 
-void Renderer::renderGameOver(int finalScore) {
-    system("cls"); // Xóa sạch màn hình lần cuối
-    gotoxy(0, 0);
-    cout << "=========================" << endl;
-    cout << "       GAME OVER         " << endl;
-    cout << "=========================" << endl;
-    cout << " Final Score: " << finalScore << endl;
-    cout << "=========================" << endl;
+    // ====== Ve Vien Duoi ======
+    cout << "\xC0"; // Goc duoi trai
+    for (int i = 0; i < A_WIDTH * 2; i++)
+        cout << "\xC4";
+    cout << "\xD9\n"; // Goc dưoi phai
 
+    // ====== Hien thi diem ======
+    cout << "Score: " << score << "\n\n";
 }
