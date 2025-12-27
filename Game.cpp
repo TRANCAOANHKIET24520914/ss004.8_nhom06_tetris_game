@@ -5,10 +5,15 @@
 Game::Game()
 {
     srand(time(NULL));      // Khoi tao khoi ngau nhien de random khoi
+    reset();
+}
+
+void Game::reset() {
     arena.reset();          // Reset board
     spawnNew();             // Sinh khoi moi
     score = 0;              // Diem
     gameOver = false;       // Cho phep game chay
+    paused = false;
 }
 
 void Game::spawnNew()
@@ -25,6 +30,25 @@ void Game::spawnNew()
 
 void Game::handleInput(int key)     // Khong va cham thi moi cho di chuyen
 {
+    // Thoat game
+    if (key == 'q' || key == 'Q' || key == 27) { // ESC
+        exit(0);
+    }
+
+    // Pause / Resume
+    if (key == 'p' || key == 'P') {
+        paused = !paused;
+        return;
+    }
+
+    // Restart
+    if (key == 'r' || key == 'R') {
+        reset();
+        return;
+    }
+
+    if (paused || gameOver) return;
+
     switch (key)
     {
     case 75: // Trai
@@ -38,12 +62,29 @@ void Game::handleInput(int key)     // Khong va cham thi moi cho di chuyen
     case 80: // Xuong
         if (!arena.checkCollision(current, posX, posY + 1))
             posY++;
-        break;
-    case 32: // space -> xoay        
-        current.rotateRight();
-        if (arena.checkCollision(current, posX, posY))
-            current.rotateRight(), current.rotateRight(), current.rotateRight();
-        break;
+        break;        
+    case 72: // ⬆
+        case 'x':
+        case 'X': {   // Xoay khoi
+            current.rotateRight();
+            if (arena.checkCollision(current, posX, posY)) {
+                // undo rotate
+                current.rotateRight();
+                current.rotateRight();
+                current.rotateRight();
+            }
+            break;
+        }
+
+        case 32: { // SPACE -> hard drop
+            while (!arena.checkCollision(current, posX, posY + 1))
+                posY++;
+
+            arena.merge(current, posX, posY);
+            score += arena.clearLines() * 100;
+            spawnNew();
+            break;
+        }
     }
 }
 

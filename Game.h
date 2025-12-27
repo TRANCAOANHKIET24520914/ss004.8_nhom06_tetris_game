@@ -15,6 +15,7 @@ private:
     int posX, posY;
     int score;
     bool gameOver;
+    bool paused;
 
 public:
     Game();
@@ -22,6 +23,7 @@ public:
     void handleInput(int key);
     void spawnNew();
     void update();
+    void reset();
 };
 
 #endif
