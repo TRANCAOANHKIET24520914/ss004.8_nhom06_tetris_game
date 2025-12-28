@@ -16,6 +16,7 @@ private:
     int score;
     bool gameOver;
     bool paused;
+    bool gameOverDrawn;
 
 public:
     Game();
@@ -24,6 +25,7 @@ public:
     void spawnNew();
     void update();
     void reset();
+    bool isPaused() const { return paused; }
 };
 
 #endif
