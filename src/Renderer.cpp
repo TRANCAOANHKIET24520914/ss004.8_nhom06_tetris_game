@@ -11,6 +11,9 @@ void Renderer::draw(const Arena &arena,
                     int posY,
                     int score)
 {
+    // Nếu posY < 0 (game over) thì không vẽ gì cả
+    if (posY < 0) return;
+
     // an con tro chuot trong console
     cout << "\e[?25l";
 
@@ -32,7 +35,6 @@ void Renderer::draw(const Arena &arena,
         {
             bool falling = false;
 
-
             int lx = x - posX;
             int ly = y - posY;
 
@@ -41,7 +43,6 @@ void Renderer::draw(const Arena &arena,
                 if (t.getCell(lx, ly) == 1)
                     falling = true;
             }
-
 
             if (arena.getCell(x, y) == 1 || falling)
                 cout << "\xDB\xDB"; // Ve khoi đac
@@ -60,4 +61,6 @@ void Renderer::draw(const Arena &arena,
 
     // ====== Hien thi diem ======
     cout << "Score: " << score << "\n\n";
+    cout << "Controls: Arrow keys, X=Rotate, Space=Hard Drop\n";
+    cout << "P=Pause, R=Restart, Q=Quit\n";
 }
